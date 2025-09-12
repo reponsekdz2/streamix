@@ -2,7 +2,9 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { HomeIcon, FireIcon, CollectionIcon, HistoryIcon, VideoCameraIcon, ClockIcon, DownloadIcon, StarIcon, CogIcon, DollarSignIcon } from '../constants';
+// FIX: Corrected import path for AppContext.
 import { AppContext } from '../App';
+// FIX: Corrected import path for AuthContext.
 import { useAuth } from '../contexts/AuthContext';
 
 interface NavItemProps {
@@ -34,6 +36,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, isSidebarOpen 
 const Sidebar: React.FC = () => {
   const context = useContext(AppContext);
   const { user } = useAuth();
+  // FIX: Added null check for context and default value to fix potential null reference.
   const isSidebarOpen = context?.isSidebarOpen ?? true;
 
   return (

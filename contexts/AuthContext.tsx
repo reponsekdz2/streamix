@@ -1,14 +1,13 @@
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../types';
-import { MOCK_USER } from '../constants';
 
 interface AuthContextType {
-  isLoggedIn: boolean;
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,22 +16,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Check for a logged-in user in localStorage on initial load
+    const storedUser = localStorage.getItem('streamix-user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const login = (userData: User) => {
-    // In a real app, this would involve an API call.
-    // Here we'll just use mock user data.
-    setUser(MOCK_USER);
+    localStorage.setItem('streamix-user', JSON.stringify(userData));
+    setUser(userData);
     navigate('/');
   };
 
   const logout = () => {
+    localStorage.removeItem('streamix-user');
     setUser(null);
     navigate('/login');
   };
-  
-  const isLoggedIn = !!user;
+
+  const isAuthenticated = !!user;
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

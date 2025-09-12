@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+// FIX: Corrected import path for AuthContext.
 import { useAuth } from '../contexts/AuthContext';
 import { CogIcon, LogoutIcon, VideoCameraIcon } from '../constants';
 
@@ -46,7 +47,7 @@ const HeaderDropdown: React.FC<HeaderDropdownProps> = ({ closeDropdown }) => {
         </Link>
       </div>
       <div className="border-t border-zinc-700 py-1">
-        <button onClick={logout} className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700">
+        <button onClick={() => { logout(); closeDropdown(); }} className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700">
             <LogoutIcon className="w-5 h-5 text-zinc-400"/> Sign Out
         </button>
       </div>

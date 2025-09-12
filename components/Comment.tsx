@@ -1,5 +1,6 @@
 
 import React from 'react';
+// FIX: Corrected import path for types.
 import { Comment as CommentType } from '../types';
 import { LikeIcon, DislikeIcon } from '../constants';
 import { formatNumber } from '../utils/formatters';

@@ -1,19 +1,34 @@
-export interface Channel {
+
+export interface User {
   name: string;
+  username: string;
   avatarUrl: string;
-  subscribers: number;
+  email: string;
+}
+
+export interface Channel {
+    name: string;
+    avatarUrl:string;
 }
 
 export interface Video {
   id: string;
   thumbnailUrl: string;
   title: string;
+  duration: string;
   channel: Channel;
   views: number;
   uploadedAt: string;
-  duration: string;
   description: string;
-  watchedPercentage?: number;
+}
+
+export interface Notification {
+    id: string;
+    user: { name: string, avatarUrl: string };
+    video: { title: string };
+    type: 'upload' | 'comment';
+    time: string;
+    read: boolean;
 }
 
 export interface Comment {
@@ -24,16 +39,8 @@ export interface Comment {
     timestamp: string;
 }
 
-export interface User {
-  name: string;
-  username: string;
-  email: string;
-  avatarUrl: string;
-}
-
-// FIX: Add missing VideoIdea interface
 export interface VideoIdea {
-  title: string;
-  description: string;
-  visuals: string;
+    title: string;
+    description: string;
+    visuals: string;
 }

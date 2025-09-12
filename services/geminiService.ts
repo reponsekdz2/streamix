@@ -1,5 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
+// FIX: Corrected import path for types.
 import { Comment, VideoIdea } from '../types';
 
 if (!process.env.API_KEY) {

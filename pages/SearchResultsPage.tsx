@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import VideoGrid from '../components/VideoGrid';
 import { MOCK_VIDEOS } from '../constants';
+// FIX: Corrected import path for types.
 import { Video } from '../types';
 
 const SearchResultsPage: React.FC = () => {

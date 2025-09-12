@@ -1,17 +1,20 @@
 
-import React, { useContext, useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MenuIcon, SearchIcon, BellIcon } from '../constants';
+import { MenuIcon, SearchIcon, BellIcon, VideoCameraIcon } from '../constants';
 import { AppContext } from '../App';
 import { useAuth } from '../contexts/AuthContext';
 import HeaderDropdown from './HeaderDropdown';
+import NotificationsDropdown from './NotificationsDropdown';
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [isNotificationsDropdownOpen, setNotificationsDropdownOpen] = useState(false);
+  
+  const context = useContext(AppContext);
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const appContext = useContext(AppContext);
-  const { user, isLoggedIn } = useAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,54 +23,66 @@ const Header: React.FC = () => {
     }
   };
 
+  const toggleProfileDropdown = () => {
+      setProfileDropdownOpen(prev => !prev);
+      setNotificationsDropdownOpen(false);
+  };
+
+  const toggleNotificationsDropdown = () => {
+      setNotificationsDropdownOpen(prev => !prev);
+      setProfileDropdownOpen(false);
+  }
+
   return (
-    <header className="sticky top-0 z-50 bg-netflix-dark bg-opacity-90 backdrop-blur-sm flex items-center justify-between px-4 sm:px-6 py-2 border-b border-zinc-800 h-16">
-      <div className="flex items-center gap-4">
-        <button onClick={appContext?.toggleSidebar} className="p-2 rounded-full hover:bg-zinc-800 transition-colors">
-          <MenuIcon className="h-6 w-6 text-zinc-400" />
+    <header className="fixed top-0 left-0 right-0 h-16 bg-black z-50 flex items-center justify-between px-6 border-b border-zinc-800">
+      <div className="flex items-center">
+        <button onClick={context?.toggleSidebar} className="p-2 rounded-full hover:bg-zinc-800 mr-4">
+          <MenuIcon className="h-6 w-6 text-white" />
         </button>
         <Link to="/" className="flex items-center">
-          <h1 className="text-2xl font-bold text-netflix-red tracking-wider">STREAMIX</h1>
+            <h1 className="text-2xl font-bold text-netflix-red tracking-wider">STREAMIX</h1>
         </Link>
       </div>
 
-      <div className="flex-1 flex justify-center px-4 lg:px-16">
-        <form onSubmit={handleSearch} className="w-full max-w-2xl">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-full py-2 pl-4 pr-12 text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-transparent transition-all"
-            />
-            <button type="submit" className="absolute inset-y-0 right-0 flex items-center justify-center px-4 text-zinc-400 hover:text-white">
-              <SearchIcon className="h-5 w-5" />
-            </button>
-          </div>
+      <div className="flex-1 max-w-2xl mx-4">
+        <form onSubmit={handleSearch} className="flex items-center">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-l-full py-2 px-6 text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+          />
+          <button type="submit" className="bg-zinc-800 border-y border-r border-zinc-700 rounded-r-full px-6 py-2 hover:bg-zinc-700">
+            <SearchIcon className="h-6 w-6 text-zinc-400" />
+          </button>
         </form>
       </div>
 
       <div className="flex items-center gap-4">
-        {isLoggedIn && user ? (
+        {user ? (
           <>
-            <button className="p-2 rounded-full hover:bg-zinc-800 transition-colors">
-              <BellIcon className="h-6 w-6 text-zinc-400" />
-            </button>
+            <Link to="/upload" className="p-2 rounded-full hover:bg-zinc-800">
+                <VideoCameraIcon className="h-6 w-6 text-white" />
+            </Link>
             <div className="relative">
-              <img
-                src={user.avatarUrl}
-                alt="User Avatar"
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="h-9 w-9 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-offset-2 hover:ring-offset-netflix-dark hover:ring-netflix-red"
-              />
-              {isDropdownOpen && <HeaderDropdown closeDropdown={() => setIsDropdownOpen(false)} />}
+                <button onClick={toggleNotificationsDropdown} className="p-2 rounded-full hover:bg-zinc-800 relative">
+                    <BellIcon className="h-6 w-6 text-white" />
+                    <span className="absolute top-1 right-1.5 block h-2 w-2 rounded-full bg-netflix-red ring-2 ring-black"></span>
+                </button>
+                {isNotificationsDropdownOpen && <NotificationsDropdown closeDropdown={() => setNotificationsDropdownOpen(false)} />}
+            </div>
+            <div className="relative">
+                <button onClick={toggleProfileDropdown}>
+                    <img src={user.avatarUrl} alt={user.name} className="h-9 w-9 rounded-full" />
+                </button>
+                {isProfileDropdownOpen && <HeaderDropdown closeDropdown={() => setProfileDropdownOpen(false)} />}
             </div>
           </>
         ) : (
           <Link to="/login">
-            <button className="bg-netflix-red text-white font-semibold px-4 py-2 rounded-md text-sm hover:bg-red-700 transition-colors">
-              Sign In
+            <button className="bg-netflix-red hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md">
+                Sign In
             </button>
           </Link>
         )}

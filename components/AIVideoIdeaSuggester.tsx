@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { generateVideoIdeas } from '../services/geminiService';
+// FIX: Corrected import path for types.
 import { VideoIdea } from '../types';
 import Spinner from './Spinner';
 

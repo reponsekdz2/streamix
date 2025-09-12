@@ -1,5 +1,5 @@
-
 import React from 'react';
+import AIVideoIdeaSuggester from '../components/AIVideoIdeaSuggester';
 
 const MonetizationPage: React.FC = () => {
     const subscribers = 850;
@@ -33,6 +33,8 @@ const MonetizationPage: React.FC = () => {
                      <p className="text-sm text-zinc-500">per 1,000 playbacks</p>
                 </div>
             </div>
+
+            <AIVideoIdeaSuggester />
 
             <div className="bg-zinc-900 p-8 rounded-lg border border-zinc-800">
                 <h2 className="text-xl font-bold text-white">Join the Partner Program</h2>

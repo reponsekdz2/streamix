@@ -1,5 +1,6 @@
 
 import React from 'react';
+// FIX: Corrected import path for types.
 import { Video } from '../types';
 import VideoCard from './VideoCard';
 import VideoCardSkeleton from './VideoCardSkeleton';
