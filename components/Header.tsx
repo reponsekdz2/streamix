@@ -1,6 +1,7 @@
 
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+// FIX: Corrected import paths.
 import { MenuIcon, SearchIcon, BellIcon, VideoCameraIcon } from '../constants';
 import { AppContext } from '../App';
 import { useAuth } from '../contexts/AuthContext';

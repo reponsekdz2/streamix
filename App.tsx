@@ -1,73 +1,60 @@
 
 import React, { useState, createContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import HomePage from './pages/HomePage';
 import WatchPage from './pages/WatchPage';
 import SearchResultsPage from './pages/SearchResultsPage';
-import { AuthProvider } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import UploadPage from './pages/UploadPage';
+import ProfilePage from './pages/ProfilePage';
 import TrendingPage from './pages/TrendingPage';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 import HistoryPage from './pages/HistoryPage';
 import WatchLaterPage from './pages/WatchLaterPage';
 import DownloadsPage from './pages/DownloadsPage';
-import MonetizationPage from './pages/MonetizationPage';
-import SettingsPage from './pages/SettingsPage';
 import PremiumPage from './pages/PremiumPage';
-import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import PlaylistPage from './pages/PlaylistPage';
+import LivePage from './pages/LivePage';
+import ShortsPage from './pages/ShortsPage';
+
+// Creator Studio Pages
+import StudioLayout from './pages/studio/StudioLayout';
+import DashboardPage from './pages/studio/DashboardPage';
+import ContentPage from './pages/studio/ContentPage';
+import AnalyticsPage from './pages/studio/AnalyticsPage';
+import CommentsPage from './pages/studio/CommentsPage';
+
+import { AuthProvider } from './contexts/AuthContext';
 import { UserDataProvider } from './contexts/UserDataContext';
-import UploadPage from './pages/UploadPage';
+import { MiniplayerProvider } from './contexts/MiniplayerContext';
+import Miniplayer from './components/Miniplayer';
 
 interface AppContextType {
-    isSidebarOpen: boolean;
-    toggleSidebar: () => void;
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
 
-const AppContent: React.FC = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const location = useLocation();
-    
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
-
-    // Pages that should not have the main layout (header/sidebar)
-    const noLayoutRoutes = ['/login', '/register'];
-    const showLayout = !noLayoutRoutes.includes(location.pathname);
+const AppLayout: React.FC = () => {
+    const [isSidebarOpen, setSidebarOpen] = useState(true);
+    const toggleSidebar = () => setSidebarOpen(prev => !prev);
 
     return (
         <AppContext.Provider value={{ isSidebarOpen, toggleSidebar }}>
-            <div className="bg-netflix-dark min-h-screen text-white">
-                {showLayout && <Header />}
-                <div className="flex">
-                    {showLayout && <Sidebar />}
-                    <main className={`flex-1 transition-all duration-300 ${showLayout ? (isSidebarOpen ? 'ml-60' : 'ml-20') : ''} mt-16 p-6`}>
-                        <Routes>
-                            <Route path="/" element={<HomePage />} />
-                            <Route path="/watch/:id" element={<WatchPage />} />
-                            <Route path="/results" element={<SearchResultsPage />} />
-                            <Route path="/trending" element={<TrendingPage />} />
-                            <Route path="/subscriptions" element={<SubscriptionsPage />} />
-                            <Route path="/history" element={<HistoryPage />} />
-                            <Route path="/watch-later" element={<WatchLaterPage />} />
-                            <Route path="/downloads" element={<DownloadsPage />} />
-                            <Route path="/monetization" element={<MonetizationPage />} />
-                            <Route path="/settings" element={<SettingsPage />} />
-                            <Route path="/premium" element={<PremiumPage />} />
-                            <Route path="/profile/:username" element={<ProfilePage />} />
-                            <Route path="/upload" element={<UploadPage />} />
-                            
-                            {/* These routes are outside the main layout */}
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/register" element={<RegisterPage />} />
-                        </Routes>
+            <div className="bg-netflix-dark text-white min-h-screen">
+                <Header />
+                <div className="flex pt-16">
+                    <Sidebar />
+                    <main className={`flex-1 p-6 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
+                        <Outlet />
                     </main>
                 </div>
+                <Miniplayer />
             </div>
         </AppContext.Provider>
     );
@@ -75,15 +62,47 @@ const AppContent: React.FC = () => {
 
 
 const App: React.FC = () => {
-    return (
-        <Router>
-            <AuthProvider>
-                <UserDataProvider>
-                    <AppContent />
-                </UserDataProvider>
-            </AuthProvider>
-        </Router>
-    );
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <UserDataProvider>
+            <MiniplayerProvider>
+                <Routes>
+                    <Route element={<AppLayout />}>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/watch/:id" element={<WatchPage />} />
+                        <Route path="/results" element={<SearchResultsPage />} />
+                        <Route path="/upload" element={<UploadPage />} />
+                        <Route path="/profile/:username" element={<ProfilePage />} />
+                        <Route path="/trending" element={<TrendingPage />} />
+                        <Route path="/subscriptions" element={<SubscriptionsPage />} />
+                        <Route path="/history" element={<HistoryPage />} />
+                        <Route path="/watch-later" element={<WatchLaterPage />} />
+                        <Route path="/downloads" element={<DownloadsPage />} />
+                        <Route path="/premium" element={<PremiumPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/playlist/:id" element={<PlaylistPage />} />
+                        <Route path="/live" element={<LivePage />} />
+                        
+                        {/* Creator Studio Nested Routes */}
+                        <Route path="/studio" element={<StudioLayout />}>
+                            <Route index element={<DashboardPage />} />
+                            <Route path="content" element={<ContentPage />} />
+                            <Route path="analytics" element={<AnalyticsPage />} />
+                            <Route path="comments" element={<CommentsPage />} />
+                        </Route>
+                    </Route>
+                    
+                    {/* Full-page routes without the main layout */}
+                    <Route path="/shorts" element={<ShortsPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                </Routes>
+            </MiniplayerProvider>
+        </UserDataProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  );
 };
 
 export default App;

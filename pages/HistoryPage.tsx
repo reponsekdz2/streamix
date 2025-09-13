@@ -1,11 +1,36 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import VideoGrid from '../components/VideoGrid';
-import { MOCK_VIDEOS, HistoryIcon } from '../constants';
+// FIX: Corrected import paths.
+import { HistoryIcon } from '../constants';
+import { useAuth } from '../contexts/AuthContext';
+import { Video } from '../types';
+import { apiService } from '../services/apiService';
 
 const HistoryPage: React.FC = () => {
-  // In a real app, this would come from user data context
-  const historyVideos = MOCK_VIDEOS.slice(5, 10);
+  const [history, setHistory] = useState<Video[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+      const fetchHistory = async () => {
+          if (!isAuthenticated) {
+              setIsLoading(false);
+              setHistory([]);
+              return;
+          }
+          setIsLoading(true);
+          try {
+              const data = await apiService.get<Video[]>('/users/me/history');
+              setHistory(data);
+          } catch (error) {
+              console.error("Failed to fetch watch history:", error);
+          } finally {
+              setIsLoading(false);
+          }
+      };
+      fetchHistory();
+  }, [isAuthenticated]);
 
   return (
     <div>
@@ -13,7 +38,7 @@ const HistoryPage: React.FC = () => {
             <HistoryIcon className="w-8 h-8 text-netflix-red"/>
             <h1 className="text-3xl font-bold text-white">Watch History</h1>
         </div>
-      <VideoGrid videos={historyVideos} />
+      <VideoGrid videos={history} isLoading={isLoading} />
     </div>
   );
 };

@@ -1,12 +1,15 @@
 
 import React from 'react';
 import VideoGrid from '../components/VideoGrid';
-import { MOCK_VIDEOS } from '../constants';
+// FIX: Corrected import path.
 import { DownloadIcon } from '../constants';
+// FIX: Corrected import path.
+import { Video } from '../types';
 
 const DownloadsPage: React.FC = () => {
   // In a real app, this would be a list of user-downloaded videos
-  const downloadedVideos = MOCK_VIDEOS.slice(0, 4);
+  // FIX: MOCK_VIDEOS has been removed, so using an empty array.
+  const downloadedVideos: Video[] = [];
 
   return (
     <div>

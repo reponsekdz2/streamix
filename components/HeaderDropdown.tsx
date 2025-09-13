@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 // FIX: Corrected import path for AuthContext.
 import { useAuth } from '../contexts/AuthContext';
+// FIX: Corrected import path for constants.
 import { CogIcon, LogoutIcon, VideoCameraIcon } from '../constants';
 
 interface HeaderDropdownProps {

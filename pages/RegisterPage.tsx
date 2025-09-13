@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import AuthLayout from '../components/AuthLayout';
 import PasswordStrengthIndicator from '../components/PasswordStrengthIndicator';
-import { MOCK_USER } from '../constants';
+import Spinner from '../components/Spinner';
 
 const RegisterPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -12,8 +12,9 @@ const RegisterPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [passwordStrength, setPasswordStrength] = useState(0);
-    const { login } = useAuth();
+    const { register } = useAuth();
 
     useEffect(() => {
         let strength = 0;
@@ -26,7 +27,7 @@ const RegisterPage: React.FC = () => {
     }, [password]);
 
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
@@ -45,10 +46,14 @@ const RegisterPage: React.FC = () => {
             return;
         }
         
-        console.log('Registering with', { email, username, password });
-        // In a real app, this would be an API call to register the user.
-        // After successful registration, we log the user in.
-        login({ ...MOCK_USER, email, username, name: username });
+        setIsSubmitting(true);
+        try {
+            await register(email, username, password);
+        } catch(err: any) {
+            setError(err.message || 'An unknown error occurred');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -111,9 +116,10 @@ const RegisterPage: React.FC = () => {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-netflix-red hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-red-500"
+                    disabled={isSubmitting}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-netflix-red hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-red-500 disabled:bg-red-900 disabled:cursor-not-allowed"
                   >
-                    Create Account
+                    {isSubmitting ? <Spinner/> : 'Create Account'}
                   </button>
                 </div>
             </form>

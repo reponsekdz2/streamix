@@ -28,6 +28,7 @@ const VideoGrid: React.FC<VideoGridProps> = ({ videos, title, isLoading = false 
   if (videos.length === 0) {
     return (
         <div className="text-center py-10">
+            {title && <h2 className="text-2xl font-bold mb-6 text-white">{title}</h2>}
             <h2 className="text-2xl font-bold text-zinc-400">No videos found.</h2>
             <p className="text-zinc-500 mt-2">Try adjusting your search or check back later.</p>
         </div>

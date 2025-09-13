@@ -19,7 +19,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         </span>
       </div>
       <div className="flex items-start mt-3">
-        <Link to={`/profile/${video.channel.name.toLowerCase()}`} className="flex-shrink-0">
+        <Link to={`/profile/${video.channel.username.toLowerCase()}`} className="flex-shrink-0">
           <img src={video.channel.avatarUrl} alt={video.channel.name} className="h-9 w-9 rounded-full mr-3" />
         </Link>
         <div className="flex-1">

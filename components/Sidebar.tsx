@@ -1,73 +1,75 @@
 
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-import { HomeIcon, FireIcon, CollectionIcon, HistoryIcon, VideoCameraIcon, ClockIcon, DownloadIcon, StarIcon, CogIcon, DollarSignIcon } from '../constants';
-// FIX: Corrected import path for AppContext.
 import { AppContext } from '../App';
-// FIX: Corrected import path for AuthContext.
+// FIX: Added CogIcon to imports
+import { FireIcon, CollectionIcon, HistoryIcon, ClockIcon, DownloadIcon, FilmIcon, VideoCameraIcon, CogIcon } from '../constants';
 import { useAuth } from '../contexts/AuthContext';
 
-interface NavItemProps {
-  to: string;
-  icon: React.ElementType;
-  label: string;
-  isSidebarOpen: boolean;
-}
+// A simple HomeIcon for the sidebar
+const HomeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+  </svg>
+);
 
-const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, isSidebarOpen }) => {
-  const baseClasses = "flex items-center p-3 rounded-lg hover:bg-zinc-800 transition-colors w-full";
-  const activeClasses = "bg-zinc-700 text-white";
-  const inactiveClasses = "text-zinc-400 hover:text-white";
-
-  return (
-    <NavLink
-      to={to}
-      end
-      className={({ isActive }) => `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
-    >
-      <Icon className="h-6 w-6" />
-      <span className={`ml-4 text-sm font-medium transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 whitespace-nowrap'}`}>
-        {label}
-      </span>
-    </NavLink>
-  );
-};
 
 const Sidebar: React.FC = () => {
-  const context = useContext(AppContext);
-  const { user } = useAuth();
-  // FIX: Added null check for context and default value to fix potential null reference.
-  const isSidebarOpen = context?.isSidebarOpen ?? true;
+    const context = useContext(AppContext);
+    const { user } = useAuth();
 
-  return (
-    <aside className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-black z-40 transition-all duration-300 ${isSidebarOpen ? 'w-60' : 'w-20'} overflow-y-auto`}>
-      <div className="flex flex-col p-3 space-y-1">
-        <NavItem to="/" icon={HomeIcon} label="Home" isSidebarOpen={isSidebarOpen} />
-        <NavItem to="/trending" icon={FireIcon} label="Trending" isSidebarOpen={isSidebarOpen} />
-        <NavItem to="/subscriptions" icon={CollectionIcon} label="Subscriptions" isSidebarOpen={isSidebarOpen} />
-        
-        <div className="border-t border-zinc-800 my-2 mx-3"></div>
+    const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
+        `flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-zinc-800 transition-colors ${isActive ? 'bg-zinc-800 font-semibold' : 'text-zinc-400'}`;
 
-        <h3 className={`px-3 text-xs text-zinc-500 font-semibold uppercase tracking-wider mb-1 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>You</h3>
-        <NavItem to={user ? `/profile/${user.username}` : '/login'} icon={VideoCameraIcon} label="Your Channel" isSidebarOpen={isSidebarOpen} />
-        <NavItem to="/history" icon={HistoryIcon} label="History" isSidebarOpen={isSidebarOpen} />
-        <NavItem to="/downloads" icon={DownloadIcon} label="Downloads" isSidebarOpen={isSidebarOpen} />
-        <NavItem to="/watch-later" icon={ClockIcon} label="Watch Later" isSidebarOpen={isSidebarOpen} />
-        
-        <div className="border-t border-zinc-800 my-2 mx-3"></div>
+    return (
+        <aside className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-black border-r border-zinc-800 z-40 transition-all duration-300 ${context?.isSidebarOpen ? 'w-64' : 'w-20'}`}>
+            <nav className="p-4 space-y-2">
+                <NavLink to="/" className={navLinkClasses}>
+                    <HomeIcon className="h-6 w-6" />
+                    {context?.isSidebarOpen && <span>Home</span>}
+                </NavLink>
+                 <NavLink to="/shorts" className={navLinkClasses}>
+                    <FilmIcon className="h-6 w-6" />
+                    {context?.isSidebarOpen && <span>Shorts</span>}
+                </NavLink>
+                <NavLink to="/trending" className={navLinkClasses}>
+                    <FireIcon className="h-6 w-6" />
+                    {context?.isSidebarOpen && <span>Trending</span>}
+                </NavLink>
+                 <NavLink to="/live" className={navLinkClasses}>
+                    <VideoCameraIcon className="h-6 w-6" />
+                    {context?.isSidebarOpen && <span>Live</span>}
+                </NavLink>
+                <NavLink to="/subscriptions" className={navLinkClasses}>
+                    <CollectionIcon className="h-6 w-6" />
+                    {context?.isSidebarOpen && <span>Subscriptions</span>}
+                </NavLink>
 
-        <h3 className={`px-3 text-xs text-zinc-500 font-semibold uppercase tracking-wider mb-1 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>Creator Studio</h3>
-        <NavItem to="/monetization" icon={DollarSignIcon} label="Monetization" isSidebarOpen={isSidebarOpen} />
-
-        <div className="border-t border-zinc-800 my-2 mx-3"></div>
-
-        <h3 className={`px-3 text-xs text-zinc-500 font-semibold uppercase tracking-wider mb-1 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>More from Streamix</h3>
-        <NavItem to="/premium" icon={StarIcon} label="Streamix Premium" isSidebarOpen={isSidebarOpen} />
-        <NavItem to="/settings" icon={CogIcon} label="Settings" isSidebarOpen={isSidebarOpen} />
-
-      </div>
-    </aside>
-  );
+                {user && (
+                    <>
+                        <div className="border-t border-zinc-800 my-4"></div>
+                        <NavLink to="/history" className={navLinkClasses}>
+                            <HistoryIcon className="h-6 w-6" />
+                            {context?.isSidebarOpen && <span>History</span>}
+                        </NavLink>
+                        <NavLink to="/watch-later" className={navLinkClasses}>
+                            <ClockIcon className="h-6 w-6" />
+                            {context?.isSidebarOpen && <span>Watch Later</span>}
+                        </NavLink>
+                         <NavLink to="/downloads" className={navLinkClasses}>
+                            <DownloadIcon className="h-6 w-6" />
+                            {context?.isSidebarOpen && <span>Downloads</span>}
+                        </NavLink>
+                        <div className="border-t border-zinc-800 my-4"></div>
+                         <NavLink to="/studio" className={navLinkClasses}>
+                            <CogIcon className="h-6 w-6" />
+                            {context?.isSidebarOpen && <span>Creator Studio</span>}
+                        </NavLink>
+                    </>
+                )}
+            </nav>
+        </aside>
+    );
 };
 
 export default Sidebar;

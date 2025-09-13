@@ -1,11 +1,36 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import VideoGrid from '../components/VideoGrid';
-import { MOCK_VIDEOS, CollectionIcon } from '../constants';
+// FIX: Corrected import paths.
+import { CollectionIcon } from '../constants';
+import { Video } from '../types';
+import { useAuth } from '../contexts/AuthContext';
+import { apiService } from '../services/apiService';
 
 const SubscriptionsPage: React.FC = () => {
-  // In a real app, this would be videos from subscribed channels
-  const subscriptionVideos = MOCK_VIDEOS.slice(0, 8);
+  const [subscriptionVideos, setSubscriptionVideos] = useState<Video[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    const fetchSubscriptions = async () => {
+      if (!isAuthenticated) {
+        setIsLoading(false);
+        setSubscriptionVideos([]);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const data = await apiService.get<Video[]>('/users/me/subscriptions');
+        setSubscriptionVideos(data);
+      } catch (error) {
+        console.error("Failed to fetch subscriptions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSubscriptions();
+  }, [isAuthenticated]);
 
   return (
     <div>
@@ -13,7 +38,7 @@ const SubscriptionsPage: React.FC = () => {
             <CollectionIcon className="w-8 h-8 text-netflix-red"/>
             <h1 className="text-3xl font-bold text-white">Subscriptions</h1>
         </div>
-      <VideoGrid videos={subscriptionVideos} title="Latest from your subscriptions" />
+      <VideoGrid videos={subscriptionVideos} isLoading={isLoading} title="Latest from your subscriptions" />
     </div>
   );
 };
